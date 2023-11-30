@@ -18,7 +18,6 @@ def dim_red_tsne(mat, p):
         n_components = p,  
         learning_rate='auto',      
         init='random',
-        method='exact', 
         perplexity=3  
     )
 
@@ -72,28 +71,30 @@ def clust(mat, k):
     
     return kmeans.labels_
 
-# import data
-ng20 = fetch_20newsgroups(subset='test')
-corpus = ng20.data[:2000]
-labels = ng20.target[:2000]
-k = len(set(labels))
 
-# embedding
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-embeddings = model.encode(corpus)
+if __name__ == "__main__" : 
+    # import data
+    ng20 = fetch_20newsgroups(subset='test')
+    corpus = ng20.data[:2000]
+    labels = ng20.target[:2000]
+    k = len(set(labels))
 
-# Perform dimensionality reduction and clustering for each method
-methods = ['ACP', 'TSNE', 'UMAP']
-for method in methods:
-    # Perform dimensionality reduction
-    red_emb = dim_red(embeddings, 20, method)
+    # embedding
+    model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+    embeddings = model.encode(corpus)
 
-    # Perform clustering
-    pred = clust(red_emb, k)
+    # Perform dimensionality reduction and clustering for each method
+    methods = ['ACP', 'TSNE', 'UMAP']
+    for method in methods:
+        # Perform dimensionality reduction
+        red_emb = dim_red(embeddings, 4, method)
 
-    # Evaluate clustering results
-    nmi_score = normalized_mutual_info_score(pred, labels)
-    ari_score = adjusted_rand_score(pred, labels)
+        # Perform clustering
+        pred = clust(red_emb, k)
 
-    # Print results
-    print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+        # Evaluate clustering results
+        nmi_score = normalized_mutual_info_score(pred, labels)
+        ari_score = adjusted_rand_score(pred, labels)
+
+        # Print results
+        print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
