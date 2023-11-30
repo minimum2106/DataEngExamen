@@ -10,6 +10,7 @@ COPY README.md .
 COPY embeddings.pickle .
 COPY labels.pickle .
 COPY utils.py .
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
-CMD python main.py%
+CMD python main.py
