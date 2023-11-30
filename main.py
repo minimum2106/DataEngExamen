@@ -4,8 +4,6 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
-import pickle
-from utils import *
 
 from utils import *
 import pickle
@@ -96,22 +94,19 @@ if __name__ == "__main__" :
     # embeddings = model.encode(corpus[:2000])
 
 
-# Perform dimensionality reduction and clustering for each method
-methods = ['ACP', 'TSNE', 'UMAP']
-for method in methods:
-    # Perform dimensionality reduction
-    red_emb = dim_red(embeddings, 4, method)
+    # Perform dimensionality reduction and clustering for each method
+    methods = ['ACP', 'TSNE', 'UMAP']
+    for method in methods:
+        # Perform dimensionality reduction
+        red_emb = dim_red(embeddings, 4, method)
 
-    sum_nmi_score = 0
-    sum_ari_score = 0
-
-        # Perform clustering
+            # Perform clustering
         sum_nmi_score = 0
         sum_ari_score = 0
 
         # Perform clustering
         for i in range(5):
-            pred = clust(embeddings, k)
+            pred = clust(red_emb, k)
 
             # Evaluate clustering results
             sum_nmi_score += normalized_mutual_info_score(pred, labels)
