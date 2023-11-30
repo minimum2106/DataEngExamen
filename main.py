@@ -87,21 +87,27 @@ embeddings = model.encode(corpus)
 methods = ['ACP', 'TSNE', 'UMAP']
 for method in methods:
     # Perform dimensionality reduction
-    red_emb = dim_red(embeddings, 20, method)
+    red_emb = dim_red(embeddings, 4, method)
+
+    sum_nmi_score = 0
+    sum_ari_score = 0
 
     # Perform clustering
-    pred = clust(red_emb, k)
+    for i in range(5):
+        pred = clust(red_emb, k)
 
-    # Evaluate clustering results
-    nmi_score = normalized_mutual_info_score(pred, labels)
-    ari_score = adjusted_rand_score(pred, labels)
+        # Evaluate clustering results
+        sum_nmi_score += normalized_mutual_info_score(pred, labels)
+        sum_ari_score += adjusted_rand_score(pred, labels)
 
     # Print results
-    print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+    nmi_score = sum_nmi_score / 20
+    ari_score = sum_ari_score / 20
+    print(f'Method: {method}\nAverage Cross-Validation NMI: {nmi_score:.2f} \nAverage Cross-Validation ARI: {ari_score:.2f}\n')
 
-# Plot graphs to compare predictions with ground truth 
-print("Visualisation des résultats en 2D")
-clust_viz_2D(embeddings, labels, pred)
+    # Plot graphs to compare predictions with ground truth 
+    print("Visualisation des résultats en 2D")
+    clust_viz_2D(embeddings, labels, pred)
 
-print("Visualisation des résultats en 2D")
-clust_viz_3D(embeddings, labels, pred)
+    print("Visualisation des résultats en 3D")
+    clust_viz_3D(embeddings, labels, pred)
