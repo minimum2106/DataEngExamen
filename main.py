@@ -17,8 +17,9 @@ def dim_red_tsne(mat, p):
     tsne = TSNE(
         n_components = p,  
         learning_rate='auto',      
-        init='random'       
-        , perplexity=3  
+        init='random',
+        method='exact', 
+        perplexity=3  
     )
 
     return tsne.fit_transform(mat)
