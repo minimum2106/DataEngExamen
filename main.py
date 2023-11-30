@@ -1,8 +1,32 @@
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import umap
+
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
+def dim_red_acp(mat, p):
+    pca = PCA(n_components=p)
+    
+    return pca.fit_transform(mat)  
+
+def dim_red_tsne(mat, p):
+    tsne = TSNE(
+        n_components = p,  
+        learning_rate='auto',      
+        init='random'       
+        , perplexity=3  
+    )
+
+    return tsne.fit_transform(mat)
+
+def dim_red_umap(mat, p):
+    umap = umap.UMAP(random_state=7)
+    
+    return umap.fit_transform(mat)
 
 def dim_red(mat, p, method):
     '''
@@ -17,18 +41,16 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        red_mat = mat[:,:p]
+        return dim_red_acp(mat, p)
         
-    elif method=='AFC':
-        red_mat = mat[:,:p]
+    elif method=='TSNE':
+        return dim_red_tsne(mat, p)
         
     elif method=='UMAP':
-        red_mat = mat[:,:p]
+        return dim_red_umap(mat, p)
         
     else:
-        raise Exception("Please select one of the three methods : APC, AFC, UMAP")
-    
-    return red_mat
+        raise Exception("Please select one of the three methods : APC, AFC, UMAP") 
 
 
 def clust(mat, k):
@@ -44,9 +66,10 @@ def clust(mat, k):
         pred : list of predicted labels
     '''
     
-    pred = np.random.randint(k, size=len(corpus))
+
+    kmeans = KMeans(n_clusters=k, random_state=0, n_init="auto").fit(mat)
     
-    return pred
+    return kmeans.labels_
 
 # import data
 ng20 = fetch_20newsgroups(subset='test')
@@ -59,7 +82,7 @@ model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 embeddings = model.encode(corpus)
 
 # Perform dimensionality reduction and clustering for each method
-methods = ['ACP', 'AFC', 'UMAP']
+methods = ['ACP', 'TSNE', 'UMAP']
 for method in methods:
     # Perform dimensionality reduction
     red_emb = dim_red(embeddings, 20, method)
