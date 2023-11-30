@@ -10,6 +10,5 @@ Le repo permet de développer un modèle de clustering s'appuyant sur la réduct
 Puis, il permet de combiner ce modèle à un algorithme de clustering. La méthode implémentée est k-Means.
 
 Description du contenu:
-- le dossier experiments contient les notebooks implémentant les différentes méthodes
-- le fichier main.py évalue chacune des approches (ACP+kmeans, AFC+kmeans, UMAP+kmeans) à l'aide des métriques NMI, ARI et Accuracy à partir des classes connues
+- le fichier main.py évalue chacune des approches (ACP+kmeans, t-SNE+kmeans, UMAP+kmeans) à l'aide des métriques NMI, ARI et Accuracy à partir des classes connues
 - le fichier requirements.txt indique les packages requis
