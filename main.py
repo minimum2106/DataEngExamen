@@ -4,9 +4,10 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
+import pickle
 
-from sentence_transformers import SentenceTransformer
-import numpy as np
+# from sentence_transformers import SentenceTransformer
+# import numpy as np
 
 def dim_red_acp(mat, p):
     pca = PCA(n_components=p)
@@ -74,14 +75,25 @@ def clust(mat, k):
 
 if __name__ == "__main__" : 
     # import data
-    ng20 = fetch_20newsgroups(subset='test')
-    corpus = ng20.data[:2000]
-    labels = ng20.target[:2000]
+    file = open('embeddings.pickle', 'rb')
+    # dump information to that file
+    embeddings = pickle.load(file)
+    # close the file
+    file.close()
+
+
+    file = open('labels.pickle', 'rb')
+    # dump information to that file
+    labels = pickle.load(file)
+    # close the file
+    file.close()
+
+
     k = len(set(labels))
 
-    # embedding
-    model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-    embeddings = model.encode(corpus)
+    # model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+    # embeddings = model.encode(corpus[:2000])
+
 
     # Perform dimensionality reduction and clustering for each method
     methods = ['ACP', 'TSNE', 'UMAP']
