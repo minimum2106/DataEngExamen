@@ -9,7 +9,7 @@ SentenceTransformers est un framework Python pour l'intégration de phrases, de 
 Le repo permet de développer un modèle de clustering s'appuyant sur la réduction de la dimensionalité. Les méthodes implémentées sont l'ACP, t-SNE et UMAP. 
 Puis, il permet de combiner ce modèle à un algorithme de clustering. La méthode implémentée est k-Means.
 
-Description du contenu:
+## Description du contenu:
 - main.py évalue chacune des approches (ACP+kmeans, t-SNE+kmeans, UMAP+kmeans) à l'aide des métriques NMI, ARI et Accuracy à partir des classes connues
 - requirements.txt indique les packages requis
 - utils.py comprend des fonctions pour générer des graphiques et comparer les clustesr
@@ -17,3 +17,16 @@ Description du contenu:
 - experiments contient des notebooks de travail et d'expérimentation
 - labels.pickle contient les étiquettes des données
 - embeddings.pickle contient les embeddings de sentence-transformer
+
+
+## Docker:
+- On a généré un image de Docker 
+
+```
+docker build -t data_eng .
+```
+
+- Pour uploader l'image sur DockerHub
+```
+docker run  -v "/Users/zewei.lin/Downloads/Projet_data_engineering/DataEngExamen":/app --name data_engin data_engin
+```
