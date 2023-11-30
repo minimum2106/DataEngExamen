@@ -1,3 +1,5 @@
 scikit-learn
 sentence-transformers
 umap-learn
+matplotlib
+pandas

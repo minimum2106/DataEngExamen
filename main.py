@@ -4,6 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
+from utils import *
 
 from sentence_transformers import SentenceTransformer
 import numpy as np
@@ -18,6 +19,7 @@ def dim_red_tsne(mat, p):
         n_components = p,  
         learning_rate='auto',      
         init='random',
+        method='exact', 
         perplexity=3  
     )
 
@@ -50,7 +52,7 @@ def dim_red(mat, p, method):
         return dim_red_umap(mat, p)
         
     else:
-        raise Exception("Please select one of the three methods : APC, AFC, UMAP") 
+        raise Exception("Please select one of the three methods : APC, t-SNE, UMAP") 
 
 
 def clust(mat, k):
@@ -71,30 +73,35 @@ def clust(mat, k):
     
     return kmeans.labels_
 
+# import data
+ng20 = fetch_20newsgroups(subset='test')
+corpus = ng20.data[:2000]
+labels = ng20.target[:2000]
+k = len(set(labels))
 
-if __name__ == "__main__" : 
-    # import data
-    ng20 = fetch_20newsgroups(subset='test')
-    corpus = ng20.data[:2000]
-    labels = ng20.target[:2000]
-    k = len(set(labels))
+# embedding
+model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+embeddings = model.encode(corpus)
 
-    # embedding
-    model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-    embeddings = model.encode(corpus)
+# Perform dimensionality reduction and clustering for each method
+methods = ['ACP', 'TSNE', 'UMAP']
+for method in methods:
+    # Perform dimensionality reduction
+    red_emb = dim_red(embeddings, 20, method)
 
-    # Perform dimensionality reduction and clustering for each method
-    methods = ['ACP', 'TSNE', 'UMAP']
-    for method in methods:
-        # Perform dimensionality reduction
-        red_emb = dim_red(embeddings, 4, method)
+    # Perform clustering
+    pred = clust(red_emb, k)
 
-        # Perform clustering
-        pred = clust(red_emb, k)
+    # Evaluate clustering results
+    nmi_score = normalized_mutual_info_score(pred, labels)
+    ari_score = adjusted_rand_score(pred, labels)
 
-        # Evaluate clustering results
-        nmi_score = normalized_mutual_info_score(pred, labels)
-        ari_score = adjusted_rand_score(pred, labels)
+    # Print results
+    print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
 
-        # Print results
-        print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+# Plot graphs to compare predictions with ground truth 
+print("Visualisation des résultats en 2D")
+clust_viz_2D(embeddings, labels, pred)
+
+print("Visualisation des résultats en 2D")
+clust_viz_3D(embeddings, labels, pred)
