@@ -15,4 +15,5 @@ Description du contenu:
 - utils.py comprend des fonctions pour générer des graphiques et comparer les clustesr
 - experiment_original_data contient des expérimentations sur les données originales, sans représentation (embeddings) avec t-SNE
 - experiments contient des notebooks de travail et d'expérimentation
-- labels.pickle contient les embeddings de sentence-transformer
+- labels.pickle contient les étiquettes des données
+- embeddings.pickle contient les embeddings de sentence-transformer
