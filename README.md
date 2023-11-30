@@ -26,7 +26,17 @@ Puis, il permet de combiner ce modèle à un algorithme de clustering. La métho
 docker build -t data_eng .
 ```
 
+- On a changé le tag 
+```
+docker tag data_engin yoy888/data_engin
+```
+
 - Pour uploader l'image sur DockerHub
+```
+docker push yoy888/data_engin:latest
+```
+
+- Pour monter le volume
 ```
 docker run  -v "/Users/zewei.lin/Downloads/Projet_data_engineering/DataEngExamen":/app --name data_engin data_engin
 ```
