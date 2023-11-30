@@ -27,7 +27,10 @@ def dim_red_tsne(mat, p):
     return tsne.fit_transform(mat)
 
 def dim_red_umap(mat, p):
-    umap = umap.UMAP(random_state=7)
+    standard_embedding = umap.UMAP(random_state=7).fit_transform(mat)
+    red_mat = standard_embedding[:,:p]
+    
+    return red_mat
     
     return umap.fit_transform(mat)
 
