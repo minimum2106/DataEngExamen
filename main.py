@@ -4,10 +4,14 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
+import pickle
 from utils import *
 
-from sentence_transformers import SentenceTransformer
-import numpy as np
+from utils import *
+import pickle
+
+# from sentence_transformers import SentenceTransformer
+# import numpy as np
 
 def dim_red_acp(mat, p):
     pca = PCA(n_components=p)
@@ -73,15 +77,24 @@ def clust(mat, k):
     
     return kmeans.labels_
 
-# import data
-ng20 = fetch_20newsgroups(subset='test')
-corpus = ng20.data[:2000]
-labels = ng20.target[:2000]
-k = len(set(labels))
 
-# embedding
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-embeddings = model.encode(corpus)
+if __name__ == "__main__" : 
+    # import data
+    file = open('embeddings.pickle', 'rb')
+    embeddings = pickle.load(file)
+    file.close()
+
+    # import labels
+    file = open('labels.pickle', 'rb')
+    labels = pickle.load(file)
+    file.close()
+
+
+    k = len(set(labels))
+
+    # model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+    # embeddings = model.encode(corpus[:2000])
+
 
 # Perform dimensionality reduction and clustering for each method
 methods = ['ACP', 'TSNE', 'UMAP']
@@ -92,22 +105,26 @@ for method in methods:
     sum_nmi_score = 0
     sum_ari_score = 0
 
-    # Perform clustering
-    for i in range(5):
-        pred = clust(red_emb, k)
+        # Perform clustering
+        sum_nmi_score = 0
+        sum_ari_score = 0
 
-        # Evaluate clustering results
-        sum_nmi_score += normalized_mutual_info_score(pred, labels)
-        sum_ari_score += adjusted_rand_score(pred, labels)
+        # Perform clustering
+        for i in range(5):
+            pred = clust(embeddings, k)
 
-    # Print results
-    nmi_score = sum_nmi_score / 20
-    ari_score = sum_ari_score / 20
-    print(f'Method: {method}\nAverage Cross-Validation NMI: {nmi_score:.2f} \nAverage Cross-Validation ARI: {ari_score:.2f}\n')
+            # Evaluate clustering results
+            sum_nmi_score += normalized_mutual_info_score(pred, labels)
+            sum_ari_score += adjusted_rand_score(pred, labels)
 
-    # Plot graphs to compare predictions with ground truth 
-    print("Visualisation des résultats en 2D")
-    clust_viz_2D(embeddings, labels, pred)
+        # Print results
+        nmi_score = sum_nmi_score / 5
+        ari_score = sum_ari_score / 5
+        print(f'Method: {method}\nAverage Cross-Validation NMI: {nmi_score:.2f} \nAverage Cross-Validation ARI: {ari_score:.2f}\n')
 
-    print("Visualisation des résultats en 3D")
-    clust_viz_3D(embeddings, labels, pred)
+        # Plot graphs to compare predictions with ground truth 
+        print("Visualisation des résultats en 2D")
+        clust_viz_2D(embeddings, labels, pred)
+
+        print("Visualisation des résultats en 3D")
+        clust_viz_3D(embeddings, labels, pred)
